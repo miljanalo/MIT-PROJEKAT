@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:knjizara/models/book_model.dart';
+import 'package:knjizara/screens/book_details_screen.dart';
 
 class BookCard extends StatelessWidget {
   final BookModel book;
@@ -8,7 +9,12 @@ class BookCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
+    return InkWell(
+      onTap: (){
+        Navigator.push(context,MaterialPageRoute(builder: (_) => BookDetailsScreen(book: book),),);
+      },
+    
+    child: Card(
       margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       elevation: 4,
       child: Padding(
@@ -68,6 +74,7 @@ class BookCard extends StatelessWidget {
           ],
         ),
       ),
+    ),
     );
   }
 }
