@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:knjizara/consts/theme_data.dart';
+import 'package:knjizara/providers/cart_provider.dart';
 import 'package:knjizara/providers/theme_provider.dart';
 import 'package:knjizara/screens/root_screen.dart';
 import 'package:provider/provider.dart';
@@ -18,6 +19,9 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) {
           return ThemeProvider();
+        }),
+        ChangeNotifierProvider(create: (_) {
+          return CartProvider();
         }),
       ],
       child: Consumer<ThemeProvider>(builder: (context, themeProvider, child) {

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:knjizara/models/book_model.dart';
+import 'package:knjizara/providers/cart_provider.dart';
+import 'package:provider/provider.dart';
 
 class BookDetailsScreen extends StatelessWidget{
   final BookModel book;
@@ -55,7 +57,7 @@ class BookDetailsScreen extends StatelessWidget{
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(onPressed: (){
-
+                Provider.of<CartProvider>(context, listen: false).addToCart(book);
               }, child: const Text('Dodaj u korpu')),
             )
 

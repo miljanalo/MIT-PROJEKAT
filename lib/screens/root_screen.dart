@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
-import 'package:knjizara/consts/app_colors.dart';
+import 'package:knjizara/providers/cart_provider.dart';
 import 'package:knjizara/screens/cart_screen.dart';
 import 'package:knjizara/screens/home_screen.dart';
 import 'package:knjizara/screens/profile_screen.dart';
 import 'package:knjizara/screens/search_screen.dart';
+import 'package:provider/provider.dart';
 
 
 
@@ -50,26 +51,31 @@ class _RootScreenState extends State<RootScreen> {
           });
           controller.jumpToPage(currentScreen);
         },
-        destinations: const [
-          NavigationDestination(
+        destinations: [
+          const NavigationDestination(
             selectedIcon: Icon(IconlyBold.home),
             icon: Icon(IconlyLight.home),
             label: "Home",
           ),
-          NavigationDestination(
+          const NavigationDestination(
             selectedIcon: Icon(IconlyBold.search),
             icon: Icon(IconlyLight.search),
             label: "Search",
           ),
           NavigationDestination(
-            selectedIcon: Icon(IconlyBold.bag2),
-            icon: Badge(
-                backgroundColor: AppColors.darkPrimary,
-                label: Text("5"),
-                child: Icon(IconlyLight.bag2)),
+            selectedIcon: const Icon(IconlyBold.bag2),
+            icon: Consumer<CartProvider>(
+              builder: (context, cartProvider, child) {
+                return Badge(
+                  isLabelVisible: cartProvider.totalItems > 0,
+                  label: Text(cartProvider.totalItems.toString()),
+                  child: const Icon(IconlyLight.bag2),
+                );
+              },
+            ),
             label: "Cart",
           ),
-          NavigationDestination(
+          const NavigationDestination(
             selectedIcon: Icon(IconlyBold.profile),
             icon: Icon(IconlyLight.profile),
             label: "Profile",
