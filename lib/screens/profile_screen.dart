@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:knjizara/screens/wishlist_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:knjizara/providers/theme_provider.dart';
 import 'package:knjizara/consts/app_colors.dart';
@@ -49,6 +50,24 @@ class ProfileScreen extends StatelessWidget {
                 value: themeProvider.getIsDarkTheme,
                 onChanged: (value) => themeProvider.setDarkTheme(themeValue: value),
                 secondary: const Icon(Icons.dark_mode),
+              ),
+            ),
+
+            // Wishlist
+            Card(
+              margin: const EdgeInsets.symmetric(vertical: 8),
+              child: ListTile(
+                leading: const Icon(Icons.favorite, color: Colors.red),
+                title: const Text("Wishlist"),
+                trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const WishlistScreen(),
+                    ),
+                  );
+                },
               ),
             ),
 

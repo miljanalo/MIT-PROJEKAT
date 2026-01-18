@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:knjizara/models/book_model.dart';
+import 'package:knjizara/providers/cart_provider.dart';
 import 'package:knjizara/screens/book_details_screen.dart';
+import 'package:provider/provider.dart';
 
 class BookCard extends StatelessWidget {
   final BookModel book;
@@ -68,7 +70,7 @@ class BookCard extends StatelessWidget {
             IconButton(
               icon: const Icon(Icons.shopping_cart_outlined),
               onPressed: () {
-                // kasnije: add to cart
+                Provider.of<CartProvider>(context, listen: false).addToCart(book);
               },
             ),
           ],

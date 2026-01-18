@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:knjizara/models/book_model.dart';
 import 'package:knjizara/providers/cart_provider.dart';
+import 'package:knjizara/providers/wishlist_provider.dart';
 import 'package:provider/provider.dart';
 
 class BookDetailsScreen extends StatelessWidget{
@@ -13,6 +14,23 @@ class BookDetailsScreen extends StatelessWidget{
       appBar: AppBar(
         title: const Text('Detalji knjige'),
         centerTitle: true,
+        actions: [
+          Consumer<WishlistProvider>(
+            builder: (context, wishlistProvider, child) {
+              final isInWishlist = wishlistProvider.isInWishlist(book);
+
+              return IconButton(
+                icon: Icon(
+                  isInWishlist ? Icons.favorite : Icons.favorite_border,
+                  color: isInWishlist ? Colors.red : null,
+                ),
+                onPressed: () {
+                wishlistProvider.toggleWishlist(book);
+                },
+              );
+            },
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),

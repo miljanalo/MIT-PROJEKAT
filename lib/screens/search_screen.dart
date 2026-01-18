@@ -46,7 +46,7 @@ class _SearchScreenState extends State<SearchScreen>{
               controller: _searchController,
               onChanged: _searchBook,
               decoration: InputDecoration(
-                hintText: 'Ptretrazite po naslovu ili autoru',
+                hintText: 'Ptretražite po naslovu ili autoru',
                 prefixIcon: const Icon(Icons.search),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12)),
