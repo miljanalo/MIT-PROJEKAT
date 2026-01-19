@@ -1,3 +1,4 @@
+import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:knjizara/models/book_model.dart';
 import 'package:knjizara/providers/cart_provider.dart';
@@ -25,7 +26,12 @@ class BookDetailsScreen extends StatelessWidget{
                   color: isInWishlist ? Colors.red : null,
                 ),
                 onPressed: () {
-                wishlistProvider.toggleWishlist(book);
+                  wishlistProvider.toggleWishlist(book);
+                  Flushbar(
+                    message: 'Proizvod je dodat u wishlist',
+                    icon: const Icon(Icons.favorite_border, color: Colors.white),
+                    duration: const Duration(seconds: 2),
+                  ).show(context);
                 },
               );
             },
@@ -76,10 +82,14 @@ class BookDetailsScreen extends StatelessWidget{
               width: double.infinity,
               child: ElevatedButton(onPressed: (){
                 Provider.of<CartProvider>(context, listen: false).addToCart(book);
+                // porukica
+                Flushbar(
+                  message: 'Proizvod je dodat u korpu',
+                  icon: const Icon(Icons.shopping_cart, color: Colors.white),
+                  duration: const Duration(seconds: 2),
+                ).show(context);
               }, child: const Text('Dodaj u korpu')),
             )
-
-
           ],
         ),
       ),

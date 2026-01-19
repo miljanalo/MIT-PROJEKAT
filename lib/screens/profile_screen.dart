@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:knjizara/providers/auth_provider.dart';
 import 'package:knjizara/screens/wishlist_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:knjizara/providers/theme_provider.dart';
@@ -81,10 +82,7 @@ class ProfileScreen extends StatelessWidget {
                   style: TextStyle(color: Colors.red),
                 ),
                 onTap: () {
-                  // kasnije implementirati logout funkcionalnost
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("Logout clicked")),
-                  );
+                 Provider.of<AuthProvider>(context, listen: false).logout();
                 },
               ),
             ),

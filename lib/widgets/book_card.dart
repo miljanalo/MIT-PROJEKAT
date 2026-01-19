@@ -1,3 +1,4 @@
+import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:knjizara/models/book_model.dart';
 import 'package:knjizara/providers/cart_provider.dart';
@@ -66,12 +67,36 @@ class BookCard extends StatelessWidget {
               ),
             ),
 
-            // Dugme (za kasnije)
+            // Dugme za dodavanje u korpu
             IconButton(
               icon: const Icon(Icons.shopping_cart_outlined),
               onPressed: () {
                 Provider.of<CartProvider>(context, listen: false).addToCart(book);
+
+                //poruka
+
+                /*ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Proizvod je dodat u korpu'),
+                    duration: const Duration(seconds: 2),
+                    action: SnackBarAction(
+                      label: 'Pogledaj korpu',
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => const CartScreen()),
+                        );
+                      },
+                    ),
+                  ),
+                );*/
+                Flushbar(
+                  message: 'Proizvod je dodat u korpu',
+                  icon: const Icon(Icons.shopping_cart, color: Colors.white),
+                  duration: const Duration(seconds: 2),
+                ).show(context);
               },
+              
             ),
           ],
         ),

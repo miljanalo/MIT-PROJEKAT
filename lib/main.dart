@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:knjizara/consts/theme_data.dart';
+import 'package:knjizara/providers/auth_provider.dart';
 import 'package:knjizara/providers/cart_provider.dart';
 import 'package:knjizara/providers/theme_provider.dart';
 import 'package:knjizara/providers/wishlist_provider.dart';
+import 'package:knjizara/screens/auth/login_screen.dart';
 import 'package:knjizara/screens/root_screen.dart';
 import 'package:provider/provider.dart';
 
@@ -26,14 +28,20 @@ class MyApp extends StatelessWidget {
         }),
         ChangeNotifierProvider(
           create: (_) => WishlistProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => AuthProvider(),
         ), 
       ],
-      child: Consumer<ThemeProvider>(builder: (context, themeProvider, child) {
+      child: Consumer2<ThemeProvider, AuthProvider>(
+        builder: (context, themeProvider, authProvider, child) {
         return MaterialApp(
           title: 'BookStore',
           theme: Styles.themeData(
-              isDarkTheme: themeProvider.getIsDarkTheme, context: context),
-          home: const RootScreen(),
+              isDarkTheme: themeProvider.getIsDarkTheme,
+              context: context
+          ),
+          home: authProvider.isAuthenticated ? RootScreen() : LoginScreen(),
         );
       }),
     );
