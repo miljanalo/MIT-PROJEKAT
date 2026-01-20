@@ -18,90 +18,91 @@ class BookCard extends StatelessWidget {
       },
     
     child: Card(
-      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      elevation: 4,
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Row(
+      elevation: 3,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             // Slika knjige
-            ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: Image.asset(
-                book.imagePath,
-                width: 80,
-                height: 120,
-                fit: BoxFit.cover,
-              ),
-            ),
-            const SizedBox(width: 12),
+            //Expanded(
+              //flex: 7,
+              //child: ClipRRect(
+                //borderRadius: const BorderRadius.vertical(
+                 // top: Radius.circular(16),
+                //),
+                //child: 
+                Image.asset(
+                  book.imagePath,
+                  //ubaceno
+                  height: 180, // fiksirana visina slike
+                  width: double.infinity,
+                  //
+                  fit: BoxFit.cover,
+                ) ,
+              //),
+            //),
 
             // Tekst pored
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    book.title,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
+            Flexible(
+              flex: 4,
+              child: Padding(padding: const EdgeInsets.all(10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      book.title,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    book.author,
-                    style: TextStyle(
-                      color: Colors.grey[700],
+                    const SizedBox(height: 2),
+                    Text(
+                      book.author,
+                      maxLines: 1,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey[700],
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    '${book.price.toStringAsFixed(0)} RSD',
-                    style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ],
+                    const SizedBox(height: 4),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          '${book.price.toStringAsFixed(0)} RSD',
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.redAccent,
+                          ),
+                        ),
+                        // Dugme za dodavanje u korpu 
+                        IconButton(
+                          icon: const Icon(Icons.shopping_cart_outlined),
+                            onPressed: () {
+                              Provider.of<CartProvider>(context, listen: false).addToCart(book);
+                              //poruka
+                              Flushbar(
+                                message: 'Proizvod je dodat u korpu',
+                                icon: const Icon(Icons.shopping_cart, color: Colors.white),
+                                duration: const Duration(seconds: 2),
+                              ).show(context);
+                            }
+                        ),
+                      ],
+                    ) 
+                  ],
+                ),
               ),
-            ),
-
-            // Dugme za dodavanje u korpu
-            IconButton(
-              icon: const Icon(Icons.shopping_cart_outlined),
-              onPressed: () {
-                Provider.of<CartProvider>(context, listen: false).addToCart(book);
-
-                //poruka
-
-                /*ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('Proizvod je dodat u korpu'),
-                    duration: const Duration(seconds: 2),
-                    action: SnackBarAction(
-                      label: 'Pogledaj korpu',
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (_) => const CartScreen()),
-                        );
-                      },
-                    ),
-                  ),
-                );*/
-                Flushbar(
-                  message: 'Proizvod je dodat u korpu',
-                  icon: const Icon(Icons.shopping_cart, color: Colors.white),
-                  duration: const Duration(seconds: 2),
-                ).show(context);
-              },
-              
-            ),
+            )
           ],
         ),
       ),
-    ),
     );
   }
 }

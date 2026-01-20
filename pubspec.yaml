@@ -39,6 +39,12 @@ dependencies:
 
   another_flushbar: ^1.11.1
 
+  carousel_slider: ^4.2.0
+
+
+
+
+
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
@@ -98,3 +104,4 @@ flutter:
 
   assets:
     - assets/images/
+    - assets/banner_images/
