@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:knjizara/data/books_data.dart';
-import 'package:knjizara/widgets/book_card.dart';
+import 'package:knjizara/widgets/book_card_grid.dart';
 import 'package:knjizara/widgets/home_banner.dart';
 
 class HomeScreen extends StatelessWidget {

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:knjizara/consts/theme_data.dart';
 import 'package:knjizara/providers/auth_provider.dart';
 import 'package:knjizara/providers/cart_provider.dart';
+import 'package:knjizara/providers/orders_provider.dart';
 import 'package:knjizara/providers/theme_provider.dart';
 import 'package:knjizara/providers/wishlist_provider.dart';
 import 'package:knjizara/screens/auth/login_screen.dart';
@@ -31,7 +32,10 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider(
           create: (_) => AuthProvider(),
-        ), 
+        ),
+        ChangeNotifierProvider(
+          create: (_) => OrdersProvider(),
+        ),
       ],
       child: Consumer2<ThemeProvider, AuthProvider>(
         builder: (context, themeProvider, authProvider, child) {

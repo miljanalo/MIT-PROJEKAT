@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:knjizara/providers/wishlist_provider.dart';
-import 'package:knjizara/widgets/book_card.dart';
+import 'package:knjizara/widgets/book_card_list.dart';
 import 'package:provider/provider.dart';
 
 class WishlistScreen extends StatelessWidget {
@@ -25,7 +25,7 @@ class WishlistScreen extends StatelessWidget {
           : ListView.builder(
               itemCount: wishlistProvider.wishlist.length,
               itemBuilder: (context, index) {
-                return BookCard(
+                return BookListCard(
                   book: wishlistProvider.wishlist[index],
                 );
               },

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:knjizara/providers/auth_provider.dart';
+import 'package:knjizara/screens/checkout/all_orders_screen.dart';
 import 'package:knjizara/screens/wishlist_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:knjizara/providers/theme_provider.dart';
@@ -66,6 +67,24 @@ class ProfileScreen extends StatelessWidget {
                     context,
                     MaterialPageRoute(
                       builder: (_) => const WishlistScreen(),
+                    ),
+                  );
+                },
+              ),
+            ),
+
+            // All Orders
+            Card(
+              margin: const EdgeInsets.symmetric(vertical: 8),
+              child: ListTile(
+                leading: const Icon(Icons.receipt_long_outlined),
+                title: const Text("All Orders"),
+                trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const OrdersScreen(),
                     ),
                   );
                 },

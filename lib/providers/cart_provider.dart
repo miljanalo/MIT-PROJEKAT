@@ -63,6 +63,10 @@ void removeFromCart(BookModel book) {
   notifyListeners();
 }
 
+void clearCart() {
+  _items.clear();
+  notifyListeners();
+}
 
 
 }

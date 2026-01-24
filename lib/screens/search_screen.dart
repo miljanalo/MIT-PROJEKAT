@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:knjizara/data/books_data.dart';
 import 'package:knjizara/models/book_model.dart';
-import 'package:knjizara/widgets/book_card.dart';
+import 'package:knjizara/widgets/book_card_list.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
@@ -67,7 +67,7 @@ class _SearchScreenState extends State<SearchScreen>{
             : ListView.builder(
               itemCount: _filteredBooks.length,
               itemBuilder: (context, index){
-                return BookCard(
+                return BookListCard(
                   book: _filteredBooks[index],
                 );
               },

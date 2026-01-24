@@ -26,10 +26,19 @@ class BookDetailsScreen extends StatelessWidget{
                   color: isInWishlist ? Colors.red : null,
                 ),
                 onPressed: () {
+                  final wasInWishlist = wishlistProvider.isInWishlist(book);
+
                   wishlistProvider.toggleWishlist(book);
+
                   Flushbar(
-                    message: 'Proizvod je dodat u wishlist',
-                    icon: const Icon(Icons.favorite_border, color: Colors.white),
+                    message: wasInWishlist
+                    ? 'Proizvod je uklonjen iz wishlist-a' 
+                    : 'Proizvod je dodat u wishlist',
+                    icon: Icon(
+                      wasInWishlist 
+                      ? Icons.favorite_border 
+                      : Icons.favorite, color: Colors.white,
+                    ),
                     duration: const Duration(seconds: 2),
                   ).show(context);
                 },
