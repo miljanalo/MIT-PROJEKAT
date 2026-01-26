@@ -40,6 +40,7 @@ class MyApp extends StatelessWidget {
       child: Consumer2<ThemeProvider, AuthProvider>(
         builder: (context, themeProvider, authProvider, child) {
         return MaterialApp(
+          key: ValueKey(authProvider.isAuthenticated),
           title: 'BookStore',
           theme: Styles.themeData(
               isDarkTheme: themeProvider.getIsDarkTheme,

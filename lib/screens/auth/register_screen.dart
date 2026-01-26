@@ -111,7 +111,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 child: ElevatedButton(
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
-                      Provider.of<AuthProvider>(context, listen: false).login();
+                      Provider.of<AuthProvider>(context, listen: false).register(
+                        name: nameController.text,
+                        email: emailController.text,
+                        password: passwordController.text,
+                      );
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
                           content: Text('Registracija uspešna'),

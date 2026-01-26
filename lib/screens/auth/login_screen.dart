@@ -94,7 +94,10 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: ElevatedButton(
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
-                      Provider.of<AuthProvider>(context, listen: false).login();
+                      Provider.of<AuthProvider>(context, listen: false).login(
+                        email: emailController.text,
+                        password: passwordController.text,
+                        );
                     }
                   },
                   child: const Text('Prijavi se'),

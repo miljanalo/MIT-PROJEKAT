@@ -12,7 +12,10 @@ class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
-
+    final authProvider = Provider.of<AuthProvider>(context);
+    final isGuest = authProvider.isGuest;
+    final user = authProvider.user;
+    
     return Scaffold(
       appBar: AppBar(
         title: const Text("Profil"),
@@ -33,15 +36,45 @@ class ProfileScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16),
-            const Text(
-              "Miljana", // placeholder ime
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-            ),
+
+            Text(
+              isGuest ? "Gost" : user?.name ?? "",
+              style: const TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+              ),),
             const SizedBox(height: 4),
-            const Text(
-              "miljana@email.com", // placeholder email
-              style: TextStyle(fontSize: 16, color: Colors.grey),
+            Text(
+              isGuest ? "Niste prijavljeni" : (user?.email ?? ""),
+              style: const TextStyle(
+                fontSize: 16,
+                color: Colors.grey,
+              ),),
+            const SizedBox(height: 32),
+
+            // poruka za gosta
+            if(isGuest)
+            Container(
+              margin: const EdgeInsets.only(top: 16),
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.orange.withOpacity(0.15),
+                borderRadius: BorderRadius.circular(12)
+              ),
+              child: Row(
+                  children: const [
+                    Icon(Icons.info_outline, color: Colors.orange),
+                    SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        "Ulogujte se ili registrujte da bi koristili wishlist, korpu i porudžbine.",
+                        style: TextStyle(fontSize: 14),
+                      ),
+                    ),
+                  ],
+                ),
             ),
+
             const SizedBox(height: 32),
 
             // Dark mode toggle
@@ -55,7 +88,10 @@ class ProfileScreen extends StatelessWidget {
               ),
             ),
 
-            // Wishlist
+            // Wishlist (ako nije gost)
+
+
+            if(!authProvider.isGuest)
             Card(
               margin: const EdgeInsets.symmetric(vertical: 8),
               child: ListTile(
@@ -73,7 +109,8 @@ class ProfileScreen extends StatelessWidget {
               ),
             ),
 
-            // All Orders
+            // All Orders (ako nije gost)
+            if(!authProvider.isGuest)
             Card(
               margin: const EdgeInsets.symmetric(vertical: 8),
               child: ListTile(
@@ -92,6 +129,7 @@ class ProfileScreen extends StatelessWidget {
             ),
 
             // Logout dugme
+            if(!isGuest)
             Card(
               margin: const EdgeInsets.symmetric(vertical: 8),
               child: ListTile(
@@ -100,6 +138,18 @@ class ProfileScreen extends StatelessWidget {
                   "Logout",
                   style: TextStyle(color: Colors.red),
                 ),
+                onTap: () {
+                 Provider.of<AuthProvider>(context, listen: false).logout();
+                },
+              ),
+            ),
+
+            if (isGuest)
+            Card(
+              margin: const EdgeInsets.symmetric(vertical: 8),
+              child: ListTile(
+                leading: const Icon(Icons.login),
+                title: const Text("Prijavite se"),
                 onTap: () {
                  Provider.of<AuthProvider>(context, listen: false).logout();
                 },

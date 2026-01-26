@@ -1,6 +1,7 @@
 import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:knjizara/models/book_model.dart';
+import 'package:knjizara/providers/auth_provider.dart';
 import 'package:knjizara/providers/cart_provider.dart';
 import 'package:knjizara/screens/book_details_screen.dart';
 import 'package:provider/provider.dart';
@@ -67,10 +68,21 @@ class BookListCard extends StatelessWidget {
               ),
             ),
 
-            // Dugme (za kasnije)
             IconButton(
               icon: const Icon(Icons.shopping_cart_outlined),
               onPressed: () {
+                final authProvider = Provider.of<AuthProvider>(context, listen: false);
+
+                // ako je gost 
+                if (!authProvider.isAuthenticated || authProvider.isGuest) {
+                  Flushbar(
+                    message: 'Morate biti ulogovani da biste dodali u korpu',
+                    icon: const Icon(Icons.lock, color: Colors.white),
+                    duration: const Duration(seconds: 2),
+                  ).show(context);
+                  return;
+                }
+
                 Provider.of<CartProvider>(context, listen: false).addToCart(book);
                 Flushbar(
                                 message: 'Proizvod je dodat u korpu',

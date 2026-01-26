@@ -1,6 +1,7 @@
 import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:knjizara/models/book_model.dart';
+import 'package:knjizara/providers/auth_provider.dart';
 import 'package:knjizara/providers/cart_provider.dart';
 import 'package:knjizara/providers/wishlist_provider.dart';
 import 'package:provider/provider.dart';
@@ -26,6 +27,18 @@ class BookDetailsScreen extends StatelessWidget{
                   color: isInWishlist ? Colors.red : null,
                 ),
                 onPressed: () {
+                  final authProvider = Provider.of<AuthProvider>(context, listen: false);
+
+                  // ako je gost
+                  if (!authProvider.isAuthenticated || authProvider.isGuest) {
+                    Flushbar(
+                      message: 'Morate biti ulogovani da biste koristili wishlist',
+                      icon: const Icon(Icons.lock, color: Colors.white),
+                      duration: const Duration(seconds: 2),
+                    ).show(context);
+                    return;
+                  }
+
                   final wasInWishlist = wishlistProvider.isInWishlist(book);
 
                   wishlistProvider.toggleWishlist(book);
@@ -90,6 +103,18 @@ class BookDetailsScreen extends StatelessWidget{
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(onPressed: (){
+                final authProvider = Provider.of<AuthProvider>(context, listen: false);
+
+                // ako je gost
+                if (!authProvider.isAuthenticated || authProvider.isGuest) {
+                  Flushbar(
+                    message: 'Morate biti ulogovani da biste dodali u korpu',
+                    icon: const Icon(Icons.lock, color: Colors.white),
+                    duration: const Duration(seconds: 2),
+                  ).show(context);
+                  return;
+                }
+
                 Provider.of<CartProvider>(context, listen: false).addToCart(book);
                 // porukica
                 Flushbar(
