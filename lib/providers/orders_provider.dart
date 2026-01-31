@@ -24,5 +24,28 @@ class OrdersProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  void updateOrderStatus(String orderId, OrderStatus newStatus) {
+    final index = _orders.indexWhere((o) => o.id == orderId);
+    if (index != -1) {
+      _orders[index] = OrderModel(
+        id: _orders[index].id,
+        items: _orders[index].items,
+        totalPrice: _orders[index].totalPrice,
+        date: _orders[index].date,
+        status: newStatus,
+      );
+      notifyListeners();
+    }
+  }
+
+  OrderModel? getOrderById(String id) {
+    try {
+      return _orders.firstWhere((o) => o.id == id);
+    } catch (_) {
+      return null;
+    }
+  }
+
+
   bool get isEmpty => _orders.isEmpty;
 }

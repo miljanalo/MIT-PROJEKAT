@@ -1,6 +1,8 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:knjizara/consts/theme_data.dart';
 import 'package:knjizara/providers/auth_provider.dart';
+import 'package:knjizara/providers/books_provider.dart';
 import 'package:knjizara/providers/cart_provider.dart';
 import 'package:knjizara/providers/orders_provider.dart';
 import 'package:knjizara/providers/theme_provider.dart';
@@ -9,7 +11,9 @@ import 'package:knjizara/screens/auth/login_screen.dart';
 import 'package:knjizara/screens/root_screen.dart';
 import 'package:provider/provider.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(const MyApp());
 }
 
@@ -35,6 +39,9 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider(
           create: (_) => OrdersProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => BooksProvider(),
         ),
       ],
       child: Consumer2<ThemeProvider, AuthProvider>(

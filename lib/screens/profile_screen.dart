@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:knjizara/providers/auth_provider.dart';
+import 'package:knjizara/screens/admin/admin_dashboard_screen.dart';
 import 'package:knjizara/screens/checkout/all_orders_screen.dart';
 import 'package:knjizara/screens/wishlist_screen.dart';
 import 'package:provider/provider.dart';
@@ -53,6 +54,7 @@ class ProfileScreen extends StatelessWidget {
             const SizedBox(height: 32),
 
             // poruka za gosta
+            
             if(isGuest)
             Container(
               margin: const EdgeInsets.only(top: 16),
@@ -78,6 +80,7 @@ class ProfileScreen extends StatelessWidget {
             const SizedBox(height: 32),
 
             // Dark mode toggle
+
             Card(
               margin: const EdgeInsets.symmetric(vertical: 8),
               child: SwitchListTile(
@@ -90,8 +93,7 @@ class ProfileScreen extends StatelessWidget {
 
             // Wishlist (ako nije gost)
 
-
-            if(!authProvider.isGuest)
+            if(!authProvider.isGuest && !authProvider.isAdmin)
             Card(
               margin: const EdgeInsets.symmetric(vertical: 8),
               child: ListTile(
@@ -110,7 +112,7 @@ class ProfileScreen extends StatelessWidget {
             ),
 
             // All Orders (ako nije gost)
-            if(!authProvider.isGuest)
+            if(!authProvider.isGuest && !authProvider.isAdmin)
             Card(
               margin: const EdgeInsets.symmetric(vertical: 8),
               child: ListTile(
@@ -128,7 +130,28 @@ class ProfileScreen extends StatelessWidget {
               ),
             ),
 
+            //panel za admina
+
+            if (authProvider.isAdmin)
+            Card(
+              margin: const EdgeInsets.symmetric(vertical: 8),
+              child: ListTile(
+                leading: const Icon(Icons.admin_panel_settings),
+                title: const Text("Admin panel"),
+                trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const AdminDashboardScreen(),
+                    ),
+                  );
+                },
+              ),
+            ),
+
             // Logout dugme
+
             if(!isGuest)
             Card(
               margin: const EdgeInsets.symmetric(vertical: 8),
@@ -144,6 +167,8 @@ class ProfileScreen extends StatelessWidget {
               ),
             ),
 
+            //dugme koje vodi na login screen
+
             if (isGuest)
             Card(
               margin: const EdgeInsets.symmetric(vertical: 8),
@@ -155,6 +180,9 @@ class ProfileScreen extends StatelessWidget {
                 },
               ),
             ),
+
+            
+
           ],
         ),
       ),
