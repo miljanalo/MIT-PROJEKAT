@@ -25,7 +25,7 @@ class _RootScreenState extends State<RootScreen> {
   void initState() {
     super.initState();
 
-    screens = const [
+    screens = [
       HomeScreen(),
       SearchScreen(),
       CartScreen(),

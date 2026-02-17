@@ -11,6 +11,9 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
+
+  bool _isLoading = false;
+
   final _formKey = GlobalKey<FormState>();
 
   final TextEditingController nameController = TextEditingController();
@@ -108,25 +111,44 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
               SizedBox(
                 width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () {
+                child: _isLoading
+                ? const Center(child: CircularProgressIndicator(),) 
+                : ElevatedButton(
+                  onPressed: () async {
                     if (_formKey.currentState!.validate()) {
-                      Provider.of<AuthProvider>(context, listen: false).register(
-                        name: nameController.text,
-                        email: emailController.text,
-                        password: passwordController.text,
-                      );
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Registracija uspešna'),
-                        ),
-                      );
-                      //stavila sam jer nece drugacije da se prebaci odmah, mozda ni ne treba
-                      Navigator.pushAndRemoveUntil(
-                        context,
-                        MaterialPageRoute(builder: (_) => RootScreen()),
-                        (route) => false,
-                      );
+                      setState(() {
+                        _isLoading = true;
+                      });
+                      
+                      try {
+                        await Provider.of<AuthProvider>(context, listen: false).register(
+                          name: nameController.text.trim(),
+                          email: emailController.text.trim(),
+                          password: passwordController.text.trim(),
+                        );
+
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Registracija uspešna'),
+                          ),
+                        );
+
+                        Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(builder: (_) => RootScreen()),
+                          (route) => false,
+                        );
+                      } catch (e) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(e.toString()),
+                          ),
+                        );
+                      }finally{
+                        setState((){
+                          _isLoading = false;
+                        });
+                      }
                     }
                   },
                   child: const Text('Registruj se'),

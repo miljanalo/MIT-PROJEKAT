@@ -43,6 +43,9 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (_) => BooksProvider(),
         ),
+        ChangeNotifierProvider(
+          create: (_) => AuthProvider()..initAuth(),
+        ),
       ],
       child: Consumer2<ThemeProvider, AuthProvider>(
         builder: (context, themeProvider, authProvider, child) {

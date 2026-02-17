@@ -11,6 +11,8 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  bool _isLoading = false;
+
   final _formKey = GlobalKey<FormState>();
 
   final TextEditingController emailController = TextEditingController();
@@ -91,13 +93,37 @@ class _LoginScreenState extends State<LoginScreen> {
 
               SizedBox(
                 width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () {
+                child: _isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : ElevatedButton(
+                  onPressed: () async{
                     if (_formKey.currentState!.validate()) {
-                      Provider.of<AuthProvider>(context, listen: false).login(
-                        email: emailController.text,
-                        password: passwordController.text,
+                      setState(() {
+                        _isLoading = true;
+                      });
+
+                      try{
+                        await Provider.of<AuthProvider>(context, listen: false).login(
+                          email: emailController.text.trim(),
+                          password: passwordController.text.trim(),
                         );
+
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Prijava uspešna'),
+                          ),
+                        );
+                      } catch (e) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(e.toString()),
+                          ),
+                        );
+                      } finally {
+                        setState(() {
+                          _isLoading = false;
+                        });
+                      } 
                     }
                   },
                   child: const Text('Prijavi se'),

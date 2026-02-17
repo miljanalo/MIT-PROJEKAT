@@ -1,27 +1,39 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:knjizara/data/books_data.dart';
 import 'package:knjizara/models/book_model.dart';
 
 class BooksProvider with ChangeNotifier {
-  final List<BookModel> _books = [...booksList];
 
-  List<BookModel> get books => _books;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  void addBook(BookModel book) {
-    _books.add(book);
-    notifyListeners();
+  Stream<List<BookModel>> get booksStream {
+    return _firestore
+      .collection('books')
+      .snapshots()
+      .map((snapshot){
+        return snapshot.docs.map((doc){
+          return BookModel.fromFirestore(doc.id, doc.data());
+        }).toList();
+      });
   }
 
-  void updateBook(String id, BookModel updatedBook) {
-    final index = _books.indexWhere((book) => book.id == id);
-    if (index >= 0) {
-      _books[index] = updatedBook;
-      notifyListeners();
-    }
+  Future<void> addBook(BookModel book) async {
+    await _firestore
+      .collection('books')
+      .add(book.toFirestore());
   }
 
-  void removeBook(String id) {
-    _books.removeWhere((book) => book.id == id);
-    notifyListeners();
+  Future<void> updateBook(String id, BookModel updatedBook) async {
+    await _firestore
+      .collection('books')
+      .doc(id)
+      .update(updatedBook.toFirestore());
+  }
+
+  Future<void> removeBook(String id) async{
+    await _firestore
+      .collection('books')
+      .doc(id)
+      .delete();
   }
 }

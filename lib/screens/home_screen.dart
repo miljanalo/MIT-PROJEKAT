@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:knjizara/data/books_data.dart';
+import 'package:knjizara/models/book_model.dart';
+import 'package:knjizara/providers/books_provider.dart';
 import 'package:knjizara/widgets/book_card_grid.dart';
 import 'package:knjizara/widgets/home_banner.dart';
+import 'package:provider/provider.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+
+    final booksProvider = Provider.of<BooksProvider>(context, listen: false);
+    
     return Scaffold(
       appBar: AppBar(
         title: const Text('Book Store'),
@@ -35,27 +40,49 @@ class HomeScreen extends StatelessWidget {
               ),
             ),
 
+            StreamBuilder<List<BookModel>>(
+              stream: booksProvider.booksStream,
+              builder: (context, snapshot) {
 
-            //grid prvi pokusaj
+                if(snapshot.connectionState == ConnectionState.waiting){
+                  return const Center(
+                    child: Padding(
+                      padding: EdgeInsets.all(24),
+                      child: CircularProgressIndicator(),
+                    ),
+                  );
+                }
 
-            GridView.builder(
-              //padding: const EdgeInsets.all(12),
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: 12,
-                mainAxisSpacing: 12,
-                childAspectRatio: 0.60,
-              ),
-              itemCount: booksList.length,
-              itemBuilder: (context, index) => SizedBox(
-                height: 300,  // 
-                child: BookCard(book: booksList[index]),
-              )
-              /*itemBuilder: (contex, index){
-                return BookCard(book: booksList[index]);
-              },*/
+                if(!snapshot.hasData || snapshot.data!.isEmpty){
+                  return const Padding(
+                    padding: EdgeInsets.all(24),
+                    child: Center(
+                      child: Text('Nema dostupnih knjiga'),
+                    ),
+                  );
+                }
+
+                final books = snapshot.data!;
+
+                return GridView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 12,
+                    mainAxisSpacing: 12,
+                    childAspectRatio: 0.60,
+                  ),
+                  itemCount: books.length,
+                  itemBuilder: (context, index) => 
+                  SizedBox(
+                    height: 300,  // 
+                    child: BookCard(
+                      book: books[index]
+                    ),
+                  )
+                );
+              }
             ),
           ]
         ),

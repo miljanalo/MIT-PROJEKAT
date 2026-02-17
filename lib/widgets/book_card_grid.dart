@@ -27,23 +27,29 @@ class BookCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             // Slika knjige
-            //Expanded(
-              //flex: 7,
-              //child: ClipRRect(
-                //borderRadius: const BorderRadius.vertical(
-                 // top: Radius.circular(16),
-                //),
-                //child: 
-                Image.asset(
-                  book.imagePath,
-                  //ubaceno
-                  height: 180, // fiksirana visina slike
-                  width: double.infinity,
-                  //
-                  fit: BoxFit.cover,
-                ) ,
-              //),
-            //),
+            ClipRRect(
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(16),
+              ),
+              child: Image.network(
+                book.imagePath,
+                height: 180,
+                width: double.infinity,
+                fit: BoxFit.cover,
+
+                // ako slika ne postoji
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(
+                    height: 180,
+                    color: Colors.grey.shade200,
+                    child: const Icon(
+                      Icons.image_not_supported,
+                      size: 40,
+                    ),
+                  );
+                },
+              ),
+            ),
 
             // Tekst pored
             Flexible(
