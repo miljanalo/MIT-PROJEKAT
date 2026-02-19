@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:knjizara/models/order_model.dart';
+import 'package:knjizara/providers/auth_provider.dart';
 import 'package:knjizara/screens/checkout/order_details_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:knjizara/providers/orders_provider.dart';
@@ -8,24 +10,45 @@ class OrdersScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ordersProvider = Provider.of<OrdersProvider>(context);
+    
+    final authProvider = context.read<AuthProvider>();
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('All Orders'),
         centerTitle: true,
       ),
-      body: ordersProvider.isEmpty
-          ? const Center(
+      body: StreamBuilder<List<OrderModel>>(
+        stream: context
+          .read<OrdersProvider>()
+          .ordersStream(
+            isAdmin: authProvider.isAdmin,
+            userId: authProvider.user!.id),
+        builder: (context, snapshot) {
+
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+
+          if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return const Center(
               child: Text(
                 'Nema porudžbina',
                 style: TextStyle(fontSize: 18),
               ),
-            )
-          : ListView.builder(
-              itemCount: ordersProvider.orders.length,
-              itemBuilder: (context, index) {
-                final order = ordersProvider.orders[index];
+            );
+          }
+
+          final orders = snapshot.data!;
+
+          return ListView.builder(
+            itemCount: orders.length,
+            itemBuilder: (context, index) {
+
+              final order = orders[index];
+
                 return Card(
                   margin: const EdgeInsets.all(12),
                   child: ListTile(
@@ -46,8 +69,11 @@ class OrdersScreen extends StatelessWidget {
                     },
                   ),
                 );
-              },
-            ),
+            },
+          );
+        }
+      )
     );
   }
 }
+

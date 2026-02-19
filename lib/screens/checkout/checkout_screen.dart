@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:knjizara/models/cart_item_model.dart';
 import 'package:knjizara/providers/cart_provider.dart';
 import 'package:knjizara/providers/orders_provider.dart';
 import 'package:provider/provider.dart';
@@ -28,9 +29,31 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         title: const Text('Checkout'),
         centerTitle: true,
       ),
-      body: cartProvider.isEmpty
-          ? const Center(child: Text('Korpa je prazna'))
-          : SingleChildScrollView(
+
+      body: StreamBuilder<List<CartItemModel>>(
+        stream: cartProvider.cartStream,
+        builder: (context, snapshot) {
+
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+
+          if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return const Center(
+              child: Text('Korpa je prazna'),
+            );
+          }
+
+          final items = snapshot.data!;
+
+          double totalPrice = 0;
+          for (var item in items) {
+            totalPrice += item.book.price * item.quantity;
+          }
+
+          return SingleChildScrollView(
               padding: const EdgeInsets.all(16),
               child: Form(
                 key: _formKey,
@@ -38,14 +61,13 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
 
-                    // 🛒 REZIME
                     const Text(
                       'Rezime porudžbine',
                       style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 8),
 
-                    ...cartProvider.items.map(
+                    ...items.map(
                       (item) => ListTile(
                         title: Text(item.book.title),
                         subtitle: Text('x${item.quantity}'),
@@ -60,7 +82,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     Align(
                       alignment: Alignment.centerRight,
                       child: Text(
-                        'Ukupno: ${cartProvider.totalPrice.toStringAsFixed(0)} RSD',
+                        'Ukupno: ${totalPrice.toStringAsFixed(0)} RSD',
                         style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -75,6 +97,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                       'Podaci za isporuku',
                       style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
+
                     const SizedBox(height: 12),
 
                     TextFormField(
@@ -139,19 +162,21 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
-                        onPressed: () {
-                          if (_formKey.currentState!.validate()) {
-                            final ordersProvider =
-                              Provider.of<OrdersProvider>(context, listen: false);
+                        onPressed: () async {
+
+                          if (!_formKey.currentState!.validate()) return;
+
+                          final ordersProvider =
+                            Provider.of<OrdersProvider>(context, listen: false);
 
                               // cuvanje porudzbine
-                              ordersProvider.addOrder(
-                                items: cartProvider.items,
-                                totalPrice: cartProvider.totalPrice,
-                              );
+                            await ordersProvider.addOrder(
+                              items: items,
+                              totalPrice: totalPrice,
+                            );
 
                               // brisanje korpe
-                              cartProvider.clearCart();
+                            await cartProvider.clearCart();
 
                             showDialog(
                               context: context,
@@ -171,15 +196,16 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                                 ],
                               ),
                             );
-                          }
-                        },
-                        child: const Text('Potvrdi porudžbinu'),
+                          },
+                          child: const Text('Potvrdi porudžbinu'),
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-            ),
+          );
+        }
+      )
     );
   }
 }

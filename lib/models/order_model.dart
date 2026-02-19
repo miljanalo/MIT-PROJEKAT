@@ -10,6 +10,7 @@ enum OrderStatus {
 
 class OrderModel {
   final String id;
+  final String userId;
   final List<CartItemModel> items;
   final double totalPrice;
   final DateTime date;
@@ -17,6 +18,7 @@ class OrderModel {
 
   OrderModel({
     required this.id,
+    required this.userId,
     required this.items,
     required this.totalPrice,
     required this.date,

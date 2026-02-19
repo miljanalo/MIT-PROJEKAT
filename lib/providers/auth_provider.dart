@@ -40,6 +40,7 @@ class AuthProvider with ChangeNotifier {
         });
 
         _user = UserModel(
+          id: uid,
           name: name,
           email: userCredential.user!.email!,
           role: UserRole.user,
@@ -74,21 +75,12 @@ class AuthProvider with ChangeNotifier {
 
       final data = userDoc.data();
 
-      final role = data?['role'] ?? 'user';
-
       _user = UserModel(
-      name: data?['name'] ?? 'Korisnik',
-      email: userCredential.user!.email!,
-      role: role == 'admin'
-        ? UserRole.admin
-        : UserRole.user,
-      );
-
-      _user = UserModel(
+        id: uid,
         name: data?['name'] ?? 'Korisnik',
         email: userCredential.user!.email!,
-        role: role == 'admin' 
-          ? UserRole.admin 
+        role: data?['role'] == 'admin'
+          ? UserRole.admin
           : UserRole.user,
       );
     
@@ -144,6 +136,7 @@ class AuthProvider with ChangeNotifier {
     final role = data?['role'] ?? 'user';
 
     _user = UserModel(
+      id: currentUser.uid,
       name: data?['name'] ?? 'Korisnik',
       email: currentUser.email!,
       role: role == 'admin'
@@ -156,7 +149,10 @@ class AuthProvider with ChangeNotifier {
 
     notifyListeners();
   } catch (e) {
-    print(e);
+    await _auth.signOut();
+    _isAuthenticated = false;
+    _user = null;
+    notifyListeners();
   }
 }
 

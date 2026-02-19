@@ -11,6 +11,7 @@ class BookDetailsScreen extends StatelessWidget{
 
   const BookDetailsScreen({super.key, required this.book});
 
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -66,7 +67,22 @@ class BookDetailsScreen extends StatelessWidget{
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Center(
-              child: Image.asset(book.imagePath, height: 220,fit: BoxFit.cover,),
+              child: Image.network(
+                book.imagePath,
+                height: 220,
+                fit: BoxFit.cover,
+
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(
+                    height: 220,
+                    color: Colors.grey.shade200,
+                    child: const Icon(
+                      Icons.image_not_supported,
+                      size: 40,
+                    ),
+                  );
+                },
+              ),
             ),
             const SizedBox(height: 20),
 
@@ -82,7 +98,7 @@ class BookDetailsScreen extends StatelessWidget{
             const SizedBox(height: 8,),
 
             Text(
-              'Cena: ${book.price} RSD',
+              'Cena: ${book.price.toStringAsFixed(0)} RSD',
               style: const TextStyle(fontSize: 18,),
             ),
             const SizedBox(height: 8,),

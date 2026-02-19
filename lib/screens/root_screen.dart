@@ -64,11 +64,24 @@ class _RootScreenState extends State<RootScreen> {
           ),
           NavigationDestination(
             selectedIcon: const Icon(IconlyBold.bag2),
-            icon: Consumer<CartProvider>(
-              builder: (context, cartProvider, child) {
+            icon: StreamBuilder(
+              stream: context.read<CartProvider>().cartStream,
+              builder: (context, snapshot){
+
+                if(!snapshot.hasData){
+                  return const Icon(IconlyLight.bag2);
+                }
+
+                final items = snapshot.data!;
+                int totalItems = 0;
+
+                for(var item in items) {
+                  totalItems += item.quantity;
+                }
+
                 return Badge(
-                  isLabelVisible: cartProvider.totalItems > 0,
-                  label: Text(cartProvider.totalItems.toString()),
+                  isLabelVisible: totalItems > 0,
+                  label: Text(totalItems.toString()),
                   child: const Icon(IconlyLight.bag2),
                 );
               },

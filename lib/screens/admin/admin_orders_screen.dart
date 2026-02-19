@@ -8,64 +8,90 @@ class AdminOrdersScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ordersProvider = Provider.of<OrdersProvider>(context);
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Manage Orders'),
         centerTitle: true,
       ),
-      body: ordersProvider.isEmpty
-          ? const Center(child: Text('Nema porudžbina'))
-          : ListView.builder(
-              itemCount: ordersProvider.orders.length,
-              itemBuilder: (context, index) {
-                final order = ordersProvider.orders[index];
+      body: StreamBuilder<List<OrderModel>>(
+        stream: context
+          .read<OrdersProvider>()
+          .ordersStream(
+            isAdmin: true,
+            userId: ''),
+        builder: (context, snapshot) {
 
-                return Card(
-                  margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  child: Padding(
-                    padding: const EdgeInsets.all(12),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Order #${order.id.substring(order.id.length - 6)}',
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          'Ukupno: ${order.totalPrice.toStringAsFixed(0)} RSD',
-                        ),
-                        const SizedBox(height: 8),
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
 
-                        // 🔽 STATUS DROPDOWN
-                        DropdownButton<OrderStatus>(
-                          value: order.status,
-                          isExpanded: true,
-                          items: OrderStatus.values.map((status) {
-                            return DropdownMenuItem(
-                              value: status,
-                              child: Text(_statusText(status)),
-                            );
-                          }).toList(),
-                          onChanged: (newStatus) {
-                            if (newStatus != null) {
-                              ordersProvider.updateOrderStatus(
-                                order.id,
-                                newStatus,
-                              );
-                            }
-                          },
-                        ),
-                      ],
+        if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return const Center(
+            child: Text('Nema porudžbina'),
+          );
+        }
+
+        final orders = snapshot.data!;
+        
+        return ListView.builder(
+          itemCount: orders.length,
+          itemBuilder: (context, index) {
+
+            final order = orders[index];
+
+            return Card(
+              margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              child: Padding(
+                padding: const EdgeInsets.all(12),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    
+                    Text(
+                      'Order #${order.id.substring(order.id.length - 6)}',
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  ),
-                );
-              },
-            ),
+
+                    const SizedBox(height: 4),
+
+                    Text(
+                      'Ukupno: ${order.totalPrice.toStringAsFixed(0)} RSD',
+                    ),
+
+                    const SizedBox(height: 8),
+
+                    DropdownButton<OrderStatus>(
+                      value: order.status,
+                      isExpanded: true,
+                      items: OrderStatus.values.map((status) {
+                        return DropdownMenuItem(
+                          value: status,
+                          child: Text(_statusText(status)),
+                        );
+                      }).toList(),
+                      onChanged: (newStatus) async {
+                        if (newStatus != null) {
+                          await context
+                            .read<OrdersProvider>().updateOrderStatus(
+                              order.id,
+                              newStatus,
+                            );
+                        }
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+        }
+      ),
     );
   }
 

@@ -16,71 +16,85 @@ class CartScreen extends StatelessWidget {
         title: const Text('Korpa'),
         centerTitle: true,
       ),
-      body: cartProvider.isEmpty ? const Center(
-        child: Text('Korpa je prazna', style: TextStyle(fontSize: 16),)
-      ) :
-        Column(children: [
-          Expanded(child: ListView.builder(
-            itemCount: cartProvider.items.length,
-            itemBuilder: (context, index){
-              
-              return CartItemCard(
-                item: cartProvider.items[index],
-              );
-            },
-          ),),
+      body: StreamBuilder(
+        stream: cartProvider.cartStream,
+        builder: (context, snapshot){
+          if (snapshot.connectionState == ConnectionState.waiting){
+            return const Center(child: CircularProgressIndicator());
+          }
 
-          // 🧾 UKUPNA CENA
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 8,
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text(
-                        'Ukupno:',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
+          if(!snapshot.hasData || snapshot.data!.isEmpty){
+            return const Center(
+              child: Text('Korpa je prazna', style: TextStyle(fontSize: 16),)
+            );
+          }
+
+          final items = snapshot.data!;
+
+          double total = 0;
+          for(var item in items){
+            total+= item.book.price *item.quantity;
+          }
+
+          return Column(
+            children: [
+              Expanded(
+                child: ListView.builder(
+                  itemCount: items.length,
+                  itemBuilder: (context, index){
+                    return CartItemCard(
+                      item: items[index],
+                    );
+                  }
+                )
+              ),
+          
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      'Ukupno:',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
                       ),
-                      Text(
-                        '${cartProvider.totalPrice.toStringAsFixed(0)} RSD',
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
+                    ),
+                    Text(
+                      '${total.toStringAsFixed(0)} RSD',
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
                       ),
-                    ],
+                    ),
+                  ]
+                )
+              ),
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const CheckoutScreen(),
+                        ),
+                      );
+                    },
+                    child: const Text('Checkout'),
                   ),
                 ),
-
-                // ✅ CHECKOUT DUGME
-                Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: cartProvider.isEmpty
-                          ? null
-                          : () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => const CheckoutScreen(),
-                                ),
-                              );
-                            },
-                      child: const Text('Checkout'),
-                    ),
-                  ),
-                )
-          
-        ],),
-        
-    );
-    
+              ),
+            ]
+          );
+        }  
+      ),
+    ); 
   }
 }

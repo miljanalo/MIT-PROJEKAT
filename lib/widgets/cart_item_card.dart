@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:knjizara/models/cart_item_model.dart';
 import 'package:knjizara/providers/cart_provider.dart';
 import 'package:provider/provider.dart';
@@ -11,7 +10,6 @@ class CartItemCard extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     final cartProvider = Provider.of<CartProvider>(context, listen: false);
 
     return Card(
@@ -23,11 +21,22 @@ class CartItemCard extends StatelessWidget{
             // Slika
             ClipRRect(
               borderRadius: BorderRadius.circular(8),
-              child: Image.asset(
+              child: Image.network(
                 item.book.imagePath,
                 width: 60,
                 height: 90,
                 fit: BoxFit.cover,
+
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(
+                    width: 60,
+                    height: 90,
+                    color: Colors.grey.shade200,
+                    child: const Icon(
+                      Icons.image_not_supported,
+                    )
+                  );
+                },
               ),
             ),
             const SizedBox(width: 12),
@@ -61,14 +70,14 @@ class CartItemCard extends StatelessWidget{
                 IconButton(
                   icon: const Icon(Icons.add),
                   onPressed: () {
-                    cartProvider.increaseQuantity(item.book);
+                    cartProvider.increaseQuantity(item.book.id);
                   },
                 ),
                 Text(item.quantity.toString()),
                 IconButton(
                   icon: const Icon(Icons.remove),
                   onPressed: () {
-                    cartProvider.decreaseQuantity(item.book);
+                    cartProvider.decreaseQuantity(item.book.id);
                   },
                 ),
               ],
@@ -78,7 +87,7 @@ class CartItemCard extends StatelessWidget{
             IconButton(
               icon: const Icon(Icons.delete_outline),
               onPressed: () {
-                cartProvider.removeFromCart(item.book);
+                cartProvider.removeFromCart(item.book.id);
               },
             ),
           ],

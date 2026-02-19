@@ -1,38 +1,26 @@
 import 'package:flutter/material.dart';
-import 'package:knjizara/data/books_data.dart';
 import 'package:knjizara/models/book_model.dart';
+import 'package:knjizara/providers/books_provider.dart';
 import 'package:knjizara/widgets/book_card_list.dart';
+import 'package:provider/provider.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
 
   @override
   State<SearchScreen> createState() => _SearchScreenState();
+}
 
-}  
 class _SearchScreenState extends State<SearchScreen>{
   final TextEditingController _searchController = TextEditingController();
-  List<BookModel> _filteredBooks =[];
-  bool _hasSearched = false;
 
-  void _searchBook(String query){
-    final results = booksList.where((book){
-      final titleLower = book.title.toLowerCase();
-      final authorLower = book.author.toLowerCase();
-      final searchLower = query.toLowerCase();
-
-      return titleLower.contains(searchLower) || authorLower.contains(searchLower);
-    }).toList();
-
-    setState(() {
-      _filteredBooks = results;
-      _hasSearched = true;
-    });
-  }
-
+  String _query = '';
 
   @override
   Widget build(BuildContext context) {
+
+    final booksProvider = Provider.of<BooksProvider>(context, listen: false);
+    
     return Scaffold(
       appBar: AppBar(
         title: const Text('Pretraga'),
@@ -44,7 +32,11 @@ class _SearchScreenState extends State<SearchScreen>{
             padding: const EdgeInsets.all(12),
             child: TextField(
               controller: _searchController,
-              onChanged: _searchBook,
+              onChanged: (value){
+                setState(() {
+                  _query = value.toLowerCase();
+                });
+              },
               decoration: InputDecoration(
                 hintText: 'Ptretražite po naslovu ili autoru',
                 prefixIcon: const Icon(Icons.search),
@@ -55,32 +47,65 @@ class _SearchScreenState extends State<SearchScreen>{
           ),
 
           Expanded(
-            child: !_hasSearched ? const Center(
-              child: Text('Pretraga',
-              style: TextStyle(fontSize: 16),
-              ),
-            )
-            : _filteredBooks.isEmpty ? const Center(
-              child: Text('Nema rezultata',
-              style: TextStyle(fontSize: 16),),
-            )
-            : ListView.builder(
-              itemCount: _filteredBooks.length,
-              itemBuilder: (context, index){
-                return BookListCard(
-                  book: _filteredBooks[index],
+            child: StreamBuilder<List<BookModel>>(
+              stream: booksProvider.booksStream,
+              builder: (context, snapshot){
+
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(
+                    child:
+                      CircularProgressIndicator(),
+                  );
+                }
+
+                if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  return const Center(
+                    child:
+                      Text('Nema dostupnih knjiga'),
+                  );
+                }
+
+                final allBooks = snapshot.data!;
+
+                final filteredBooks = allBooks.where((book) {
+                  final title = book.title.toLowerCase();
+                  final author = book.author.toLowerCase();
+                  return title.contains(_query) ||
+                      author.contains(_query);
+                }
+                ).toList();
+            
+                if (_query.isEmpty){
+                  return const Center(
+                    child: Text('Pretraga',
+                      style: TextStyle(fontSize: 16),
+                    )
+                  );
+                }
+              
+                if(filteredBooks.isEmpty){
+                  return const Center(
+                    child: Text('Nema rezultata',
+                      style: TextStyle(fontSize: 16),
+                    ),
+                  );
+                }
+            
+                return ListView.builder(
+                  itemCount: filteredBooks.length,
+                  itemBuilder: (context, index) {
+                    return BookListCard(
+                      book: filteredBooks[index],
+                    );
+                  },
                 );
-              },
+              }
             ),
-          ),
-
-
-
+          )
         ],
       ),
-        );
+    );
   }
-
 }
   
 

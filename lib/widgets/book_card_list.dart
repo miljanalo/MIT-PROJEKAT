@@ -28,11 +28,22 @@ class BookListCard extends StatelessWidget {
             // Slika knjige
             ClipRRect(
               borderRadius: BorderRadius.circular(8),
-              child: Image.asset(
+              child: Image.network(
                 book.imagePath,
                 width: 80,
                 height: 120,
                 fit: BoxFit.cover,
+
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(
+                    width: 80,
+                    height: 120,
+                    color: Colors.grey.shade200,
+                    child: const Icon(
+                      Icons.image_not_supported,
+                    )
+                  );
+                },
               ),
             ),
             const SizedBox(width: 12),

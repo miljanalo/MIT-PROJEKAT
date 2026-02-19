@@ -27,7 +27,7 @@ Color orderStatusColor(OrderStatus status) {
     case OrderStatus.cancelled:
       return Colors.red;
     case OrderStatus.delivered:
-      return Colors.pink;
+      return Colors.blueGrey;
   }
 }
 
@@ -46,7 +46,7 @@ class OrderDetailsScreen extends StatelessWidget {
         title: const Text('Order Details'),
         centerTitle: true,
       ),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -97,24 +97,17 @@ class OrderDetailsScreen extends StatelessWidget {
 
             const SizedBox(height: 12),
 
-            Expanded(
-              child: ListView.builder(
-                itemCount: order.items.length,
-                itemBuilder: (context, index) {
-                  final item = order.items[index];
-
-                  return Card(
-                    margin: const EdgeInsets.symmetric(vertical: 6),
-                    child: ListTile(
-                      title: Text(item.book.title),
-                      subtitle: Text('Količina: ${item.quantity}'),
-                      trailing: Text(
-                        '${(item.book.price * item.quantity).toStringAsFixed(0)} RSD',
-                        style: const TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                  );
-                },
+            ...order.items.map(
+              (item) => Card(
+                margin: const EdgeInsets.symmetric(vertical: 6),
+                child: ListTile(
+                  title: Text(item.book.title),
+                  subtitle: Text('Količina: ${item.quantity}'),
+                  trailing: Text(
+                    '${(item.book.price * item.quantity).toStringAsFixed(0)} RSD',
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ),
               ),
             ),
 
