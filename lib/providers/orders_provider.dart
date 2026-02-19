@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:knjizara/models/book_model.dart';
 import 'package:knjizara/models/order_model.dart';
@@ -8,7 +7,6 @@ import 'package:knjizara/models/cart_item_model.dart';
 class OrdersProvider with ChangeNotifier {
   
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   CollectionReference get _ordersRef {
     return _firestore.collection('orders');
@@ -21,6 +19,8 @@ class OrdersProvider with ChangeNotifier {
 
     Query query = _ordersRef;
 
+    // user vidi samo svoje porudzbine
+
     if(!isAdmin) {
       query = query.where(
         'userId',
@@ -28,8 +28,9 @@ class OrdersProvider with ChangeNotifier {
       );
     }
 
+    query = query.orderBy('createdAt', descending: true);
+
     return query
-        .orderBy('createdAt', descending: true)
         .snapshots()
         .map((snapshot) {
 
@@ -74,14 +75,15 @@ class OrdersProvider with ChangeNotifier {
   }   
 
   Future<void> addOrder({
+    required String userId,
     required List<CartItemModel> items,
     required double totalPrice,
   }) async {
 
-    final uid = _auth.currentUser!.uid;
+    //final uid = _auth.currentUser!.uid;
 
     await _ordersRef.add({
-      'userId' : uid,
+      'userId' : userId,
       'totalPrice': totalPrice,
       'createdAt': Timestamp.now(),
       'status': OrderStatus.pending.index,

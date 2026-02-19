@@ -9,16 +9,24 @@ class CartProvider with ChangeNotifier{
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  CollectionReference get _cartRef {
-    final uid = _auth.currentUser!.uid;
+  CollectionReference? get _cartRef {
+    final user = _auth.currentUser;
+    if(user == null) return null;
     return _firestore
       .collection('users')
-      .doc(uid)
+      .doc(user.uid)
       .collection('cart');
   }
 
   Stream<List<CartItemModel>> get cartStream {
-    return _cartRef.snapshots().map((snapshot) {
+
+    final ref = _cartRef;
+
+    if(ref == null){
+      return Stream.value([]);
+    }
+
+    return ref.snapshots().map((snapshot) {
 
       return snapshot.docs.map((doc) {
 
@@ -42,21 +50,24 @@ class CartProvider with ChangeNotifier{
   }
 
   Future<void> addToCart(BookModel book) async {
+
+    final ref = _cartRef;
+    if(ref == null) return;
     
-    final doc = await _cartRef.doc(book.id).get();
+    final doc = await ref.doc(book.id).get();
 
     if(doc.exists){
 
       final currentQty = doc['quantity'] ?? 1;
 
-      await _cartRef.doc(book.id).update({
+      await ref.doc(book.id).update({
         'quantity': currentQty + 1,
       });
 
     }
     else {
       
-      await _cartRef.doc(book.id).set({
+      await ref.doc(book.id).set({
         'title': book.title,
         'author': book.author,
         'price': book.price,
@@ -69,37 +80,53 @@ class CartProvider with ChangeNotifier{
   }
 
   Future<void> increaseQuantity(String bookId) async {
-    final doc = await _cartRef.doc(bookId).get();
+
+    final ref = _cartRef;
+    if(ref == null) return;
+
+    final doc = await ref.doc(bookId).get();
     if (doc.exists) {
       final currentQty = doc['quantity'] ?? 1;
-        await _cartRef.doc(bookId).update({
+        await ref.doc(bookId).update({
           'quantity': currentQty + 1,
         });
     } 
   }
 
   Future<void> decreaseQuantity(String bookId) async {
-    final doc = await _cartRef.doc(bookId).get();
+
+    final ref = _cartRef;
+    if(ref == null) return;
+
+    final doc = await ref.doc(bookId).get();
 
     if (doc.exists) {
       final currentQty = doc['quantity'] ?? 1;
 
       if (currentQty > 1) {
-        await _cartRef.doc(bookId).update({
+        await ref.doc(bookId).update({
           'quantity': currentQty - 1,
         });
       } else {
-        await _cartRef.doc(bookId).delete();
+        await ref.doc(bookId).delete();
       }
     }
   }
 
   Future<void> removeFromCart(String bookId) async {
-    await _cartRef.doc(bookId).delete();
+
+    final ref = _cartRef;
+    if(ref == null) return;
+
+    await ref.doc(bookId).delete();
   }
 
   Future<void> clearCart() async {
-    final snapshot = await _cartRef.get();
+
+    final ref = _cartRef;
+    if(ref == null) return;
+
+    final snapshot = await ref.get();
 
     for(var doc in snapshot.docs){
       await doc.reference.delete();

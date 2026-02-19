@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:knjizara/models/cart_item_model.dart';
+import 'package:knjizara/providers/auth_provider.dart';
 import 'package:knjizara/providers/cart_provider.dart';
 import 'package:knjizara/providers/orders_provider.dart';
 import 'package:provider/provider.dart';
@@ -169,8 +170,11 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                           final ordersProvider =
                             Provider.of<OrdersProvider>(context, listen: false);
 
+                          final auth = context.read<AuthProvider>();
+
                               // cuvanje porudzbine
                             await ordersProvider.addOrder(
+                              userId: auth.user!.id,
                               items: items,
                               totalPrice: totalPrice,
                             );

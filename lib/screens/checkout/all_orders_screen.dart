@@ -11,11 +11,23 @@ class OrdersScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     
-    final authProvider = context.read<AuthProvider>();
+    final authProvider = context.watch<AuthProvider>();
+
+    if(authProvider.isGuest || authProvider.user == null){
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text('Sve porudžbine'),
+          centerTitle: true,
+        ),
+        body: const Center(
+          child: Text('Morate biti prijavljeni da biste videli porudžbine.'),
+        )
+      );
+    }
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('All Orders'),
+        title: const Text('Sve porudžbine'),
         centerTitle: true,
       ),
       body: StreamBuilder<List<OrderModel>>(
@@ -23,7 +35,8 @@ class OrdersScreen extends StatelessWidget {
           .read<OrdersProvider>()
           .ordersStream(
             isAdmin: authProvider.isAdmin,
-            userId: authProvider.user!.id),
+            userId: authProvider.user!.id
+          ),
         builder: (context, snapshot) {
 
           if (snapshot.connectionState == ConnectionState.waiting) {
