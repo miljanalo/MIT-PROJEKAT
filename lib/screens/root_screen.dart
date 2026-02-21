@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:knjizara/providers/cart_provider.dart';
 import 'package:knjizara/screens/cart_screen.dart';
 import 'package:knjizara/screens/home_screen.dart';
@@ -53,23 +52,23 @@ class _RootScreenState extends State<RootScreen> {
         },
         destinations: [
           const NavigationDestination(
-            selectedIcon: Icon(IconlyBold.home),
-            icon: Icon(IconlyLight.home),
-            label: "Home",
+            selectedIcon: Icon(Icons.home),
+            icon: Icon(Icons.home_outlined),
+            label: "Početna",
           ),
           const NavigationDestination(
-            selectedIcon: Icon(IconlyBold.search),
-            icon: Icon(IconlyLight.search),
-            label: "Search",
+            selectedIcon: Icon(Icons.search),
+            icon: Icon(Icons.search_outlined),
+            label: "Pretraga",
           ),
           NavigationDestination(
-            selectedIcon: const Icon(IconlyBold.bag2),
+            selectedIcon: const Icon(Icons.shopping_basket),
             icon: StreamBuilder(
               stream: context.read<CartProvider>().cartStream,
               builder: (context, snapshot){
 
                 if(!snapshot.hasData){
-                  return const Icon(IconlyLight.bag2);
+                  return const Icon(Icons.shopping_basket_outlined);
                 }
 
                 final items = snapshot.data!;
@@ -82,16 +81,16 @@ class _RootScreenState extends State<RootScreen> {
                 return Badge(
                   isLabelVisible: totalItems > 0,
                   label: Text(totalItems.toString()),
-                  child: const Icon(IconlyLight.bag2),
+                  child: const Icon(Icons.shopping_basket_outlined),
                 );
               },
             ),
-            label: "Cart",
+            label: "Korpa",
           ),
           const NavigationDestination(
-            selectedIcon: Icon(IconlyBold.profile),
-            icon: Icon(IconlyLight.profile),
-            label: "Profile",
+            selectedIcon: Icon(Icons.person),
+            icon: Icon(Icons.person_outline),
+            label: "Profil",
           )
         ],
       ),

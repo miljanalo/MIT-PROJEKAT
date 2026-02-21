@@ -18,44 +18,55 @@ class BookDetailsScreen extends StatelessWidget{
         title: const Text('Detalji knjige'),
         centerTitle: true,
         actions: [
-          Consumer<WishlistProvider>(
-            builder: (context, wishlistProvider, child) {
-              final isInWishlist = wishlistProvider.isInWishlist(book);
+          Consumer2<AuthProvider, WishlistProvider>(
+            builder: (context, authProvider, wishlistProvider, child) {
 
-              return IconButton(
-                icon: Icon(
-                  isInWishlist ? Icons.favorite : Icons.favorite_border,
-                  color: isInWishlist ? Colors.red : null,
-                ),
-                onPressed: () {
-                  final authProvider = Provider.of<AuthProvider>(context, listen: false);
-
-                  // ako je gost
-                  if (!authProvider.isAuthenticated || authProvider.isGuest) {
+              if (!authProvider.isAuthenticated || authProvider.isGuest) {
+                return IconButton(
+                  icon: const Icon(Icons.favorite_border),
+                  onPressed: (){
                     Flushbar(
                       message: 'Morate biti ulogovani da biste koristili wishlist',
                       icon: const Icon(Icons.lock, color: Colors.white),
                       duration: const Duration(seconds: 2),
                     ).show(context);
-                    return;
                   }
+                );
+              }
 
-                  final wasInWishlist = wishlistProvider.isInWishlist(book);
+              return StreamBuilder<bool>(
+                stream: wishlistProvider.isInWishlistStream(
+                  authProvider.user!.id,
+                  book.id,
+                ),
+                builder: (context, snapshot){
+                  final isInWishlist = snapshot.data ?? false;
 
-                  wishlistProvider.toggleWishlist(book);
-
-                  Flushbar(
-                    message: wasInWishlist
-                    ? 'Proizvod je uklonjen iz wishlist-a' 
-                    : 'Proizvod je dodat u wishlist',
+                  return IconButton(
                     icon: Icon(
-                      wasInWishlist 
-                      ? Icons.favorite_border 
-                      : Icons.favorite, color: Colors.white,
+                      isInWishlist ? Icons.favorite : Icons.favorite_border,
+                      color: isInWishlist ? Colors.red : null,
                     ),
-                    duration: const Duration(seconds: 2),
-                  ).show(context);
-                },
+                    onPressed: () async {
+                      await wishlistProvider.toggleWishlist(
+                        authProvider.user!.id,
+                        book,
+                      );
+
+                      Flushbar(
+                        message: isInWishlist
+                        ? 'Proizvod je uklonjen iz wishlist-a' 
+                        : 'Proizvod je dodat u wishlist',
+                        icon: Icon(
+                          isInWishlist 
+                          ? Icons.favorite_border 
+                          : Icons.favorite, color: Colors.white,
+                        ),
+                        duration: const Duration(seconds: 2),
+                      ).show(context);
+                    }
+                  );
+                }
               );
             },
           ),

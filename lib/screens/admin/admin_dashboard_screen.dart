@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:knjizara/screens/admin/admin_banners_screen.dart';
 import 'package:knjizara/screens/admin/admin_books_screen.dart';
 import 'package:knjizara/screens/admin/admin_orders_screen.dart';
 
@@ -53,6 +54,27 @@ class AdminDashboardScreen extends StatelessWidget {
                 },
               ),
             ),
+
+            const SizedBox(height: 12),
+
+            // BANNERS
+            Card(
+              child: ListTile(
+                leading: const Icon(Icons.photo_library),
+                title: const Text('Manage Banners'),
+                subtitle: const Text('Add, edit or delete banners'),
+                trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const AdminBannersScreen(),
+                    ),
+                  );
+                },
+              ),
+            ),
+
           ],
         ),
       ),

@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:knjizara/consts/theme_data.dart';
 import 'package:knjizara/providers/auth_provider.dart';
+import 'package:knjizara/providers/banner_provider.dart';
 import 'package:knjizara/providers/books_provider.dart';
 import 'package:knjizara/providers/cart_provider.dart';
 import 'package:knjizara/providers/orders_provider.dart';
@@ -45,6 +46,9 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider(
           create: (_) => AuthProvider()..initAuth(),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => BannerProvider(),
         ),
       ],
       child: Consumer2<ThemeProvider, AuthProvider>(
