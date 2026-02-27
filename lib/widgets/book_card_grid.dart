@@ -94,10 +94,12 @@ class BookCard extends StatelessWidget {
                             onPressed: () {
                               final authProvider = Provider.of<AuthProvider>(context, listen: false);
 
-                              // ako je gost
-                              if (!authProvider.isAuthenticated || authProvider.isGuest) {
+                              // ako je gost ili admin
+                              if (!authProvider.isAuthenticated || authProvider.isGuest || authProvider.isAdmin) {
                                 Flushbar(
-                                  message: 'Morate biti ulogovani da biste dodali u korpu',
+                                  message: authProvider.isAdmin
+                                  ? 'Administrator ne može da dodaje proizvode u korpu'
+                                  : 'Morate biti ulogovani da biste dodali u korpu',
                                   icon: const Icon(Icons.lock, color: Colors.white),
                                   duration: const Duration(seconds: 2),
                                 ).show(context);

@@ -32,7 +32,7 @@ class OrdersScreen extends StatelessWidget {
       ),
       body: StreamBuilder<List<OrderModel>>(
         stream: context
-          .read<OrdersProvider>()
+          .watch<OrdersProvider>()
           .ordersStream(
             isAdmin: authProvider.isAdmin,
             userId: authProvider.user!.id

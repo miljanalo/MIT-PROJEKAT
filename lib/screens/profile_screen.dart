@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:knjizara/providers/auth_provider.dart';
 import 'package:knjizara/screens/admin/admin_dashboard_screen.dart';
 import 'package:knjizara/screens/checkout/all_orders_screen.dart';
+import 'package:knjizara/screens/edit_profile_screen.dart';
 import 'package:knjizara/screens/wishlist_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:knjizara/providers/theme_provider.dart';
@@ -26,15 +27,19 @@ class ProfileScreen extends StatelessWidget {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            // Korisnički info
             CircleAvatar(
               radius: 50,
               backgroundColor: AppColors.lightPrimary,
-              child: const Icon(
+              backgroundImage: user?.profileImage !=null
+              ? NetworkImage(user!.profileImage!)
+              : null,
+              child: user?.profileImage == null
+              ? const Icon(
                 Icons.person,
                 size: 50,
                 color: Colors.white,
-              ),
+              )
+              : null,
             ),
             const SizedBox(height: 16),
 
@@ -117,13 +122,31 @@ class ProfileScreen extends StatelessWidget {
               margin: const EdgeInsets.symmetric(vertical: 8),
               child: ListTile(
                 leading: const Icon(Icons.receipt_long_outlined),
-                title: const Text("All Orders"),
+                title: const Text("Moje porudžbine"),
                 trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                 onTap: () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (_) => const OrdersScreen(),
+                    ),
+                  );
+                },
+              ),
+            ),
+
+            if(!authProvider.isGuest && !authProvider.isAdmin)
+            Card(
+              margin: const EdgeInsets.symmetric(vertical: 8),
+              child: ListTile(
+                leading: const Icon(Icons.person_outline_sharp),
+                title: const Text("Izmena profila"),
+                trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const EditProfileScreen(),
                     ),
                   );
                 },

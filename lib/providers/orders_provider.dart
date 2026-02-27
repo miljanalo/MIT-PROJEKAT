@@ -31,6 +31,7 @@ class OrdersProvider with ChangeNotifier {
     query = query.orderBy('createdAt', descending: true);
 
     return query
+        
         .snapshots()
         .map((snapshot) {
 

@@ -82,6 +82,7 @@ class AuthProvider with ChangeNotifier {
         role: data?['role'] == 'admin'
           ? UserRole.admin
           : UserRole.user,
+        profileImage: data?['profileImage']
       );
     
       _isAuthenticated = true;
@@ -142,6 +143,7 @@ class AuthProvider with ChangeNotifier {
       role: role == 'admin'
           ? UserRole.admin
           : UserRole.user,
+      profileImage: data?['profileImage']
     );
 
     _isAuthenticated = true;
@@ -154,6 +156,57 @@ class AuthProvider with ChangeNotifier {
     _user = null;
     notifyListeners();
   }
+}
+
+Future<void> updateUser({
+  required String name,
+  required String email,
+  String? passwordCheck,
+  String? profileImage,
+}) async{
+  final firebaseUser = FirebaseAuth.instance.currentUser;
+
+  if(firebaseUser == null){
+    throw Exception("Korisnik nije prijavljen");
+  }
+
+  try {
+
+    if(email != firebaseUser.email){
+      if (passwordCheck == null || passwordCheck.isEmpty) {
+        throw Exception("Za promenu email-a potrebno je potvrditi lozinku");
+      }
+
+      final credential = EmailAuthProvider.credential(
+        email: firebaseUser.email!,
+        password: passwordCheck,
+      );
+
+      await firebaseUser.reauthenticateWithCredential(credential);
+
+      await firebaseUser.verifyBeforeUpdateEmail(email);
+    }
+
+    await firebaseUser.updateDisplayName(name);
+
+    await _firestore
+      .collection('users')
+      .doc(firebaseUser.uid)
+      .update({
+        'name': name,
+        'email': email,
+        if(profileImage != null)
+          'profileImage': profileImage,
+      });
+
+    await initAuth();
+
+  } on FirebaseAuthException catch (e){
+    throw Exception(e.message ?? "Greška pri ažuriranju");
+  }
+
+  await initAuth();
+
 }
 
 }

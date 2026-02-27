@@ -19,7 +19,8 @@ class AdminOrdersScreen extends StatelessWidget {
           .read<OrdersProvider>()
           .ordersStream(
             isAdmin: true,
-            userId: ''),
+            userId: ''
+          ),
         builder: (context, snapshot) {
 
         if (snapshot.connectionState == ConnectionState.waiting) {

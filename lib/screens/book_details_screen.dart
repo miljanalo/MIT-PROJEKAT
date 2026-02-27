@@ -21,12 +21,14 @@ class BookDetailsScreen extends StatelessWidget{
           Consumer2<AuthProvider, WishlistProvider>(
             builder: (context, authProvider, wishlistProvider, child) {
 
-              if (!authProvider.isAuthenticated || authProvider.isGuest) {
+              if (!authProvider.isAuthenticated || authProvider.isGuest || authProvider.isAdmin) {
                 return IconButton(
                   icon: const Icon(Icons.favorite_border),
                   onPressed: (){
                     Flushbar(
-                      message: 'Morate biti ulogovani da biste koristili wishlist',
+                      message: authProvider.isAdmin
+                      ? 'Administrator ne može da koristi wishlist'
+                      : 'Morate biti ulogovani da biste koristili wishlist',
                       icon: const Icon(Icons.lock, color: Colors.white),
                       duration: const Duration(seconds: 2),
                     ).show(context);
@@ -85,6 +87,7 @@ class BookDetailsScreen extends StatelessWidget{
 
                 errorBuilder: (context, error, stackTrace) {
                   return Container(
+                    width: 160,
                     height: 220,
                     color: Colors.grey.shade200,
                     child: const Icon(
@@ -132,10 +135,12 @@ class BookDetailsScreen extends StatelessWidget{
               child: ElevatedButton(onPressed: (){
                 final authProvider = Provider.of<AuthProvider>(context, listen: false);
 
-                // ako je gost
-                if (!authProvider.isAuthenticated || authProvider.isGuest) {
+                // ako je gost ili admin
+                if (!authProvider.isAuthenticated || authProvider.isGuest || authProvider.isAdmin) {
                   Flushbar(
-                    message: 'Morate biti ulogovani da biste dodali u korpu',
+                    message: authProvider.isAdmin
+                    ? 'Administrator ne može da dodaje proizvode u korpu'
+                    : 'Morate biti ulogovani da biste dodali u korpu',
                     icon: const Icon(Icons.lock, color: Colors.white),
                     duration: const Duration(seconds: 2),
                   ).show(context);
