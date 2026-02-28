@@ -63,11 +63,15 @@ class OrdersProvider with ChangeNotifier {
       return OrderModel(
         id: doc.id,
         userId: data['userId'],
+        customerName: data['customerName'] ?? '',
+        customerEmail: data['customerEmail'] ?? '',
         items: items,
         totalPrice:
           (data['totalPrice'] as num).toDouble(),
         date:
           (data['createdAt'] as Timestamp).toDate(),
+        address: data['address'] ?? '',
+        phoneNumber: data['phoneNumber'] ?? '',
         status: 
           OrderStatus.values[data['status'] ?? 0],
       );
@@ -77,16 +81,22 @@ class OrdersProvider with ChangeNotifier {
 
   Future<void> addOrder({
     required String userId,
+    required String customerName,
+    required String customerEmail,
     required List<CartItemModel> items,
     required double totalPrice,
+    required String address,
+    required String phoneNumber,
   }) async {
-
-    //final uid = _auth.currentUser!.uid;
 
     await _ordersRef.add({
       'userId' : userId,
       'totalPrice': totalPrice,
+      'customerName': customerName,
+      'customerEmail': customerEmail,
       'createdAt': Timestamp.now(),
+      'address': address,
+      'phoneNumber': phoneNumber,
       'status': OrderStatus.pending.index,
       'items': items.map((item){
         return {

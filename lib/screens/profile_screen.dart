@@ -6,7 +6,6 @@ import 'package:knjizara/screens/edit_profile_screen.dart';
 import 'package:knjizara/screens/wishlist_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:knjizara/providers/theme_provider.dart';
-import 'package:knjizara/consts/app_colors.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -29,7 +28,6 @@ class ProfileScreen extends StatelessWidget {
           children: [
             CircleAvatar(
               radius: 50,
-              backgroundColor: AppColors.lightPrimary,
               backgroundImage: user?.profileImage !=null
               ? NetworkImage(user!.profileImage!)
               : null,
@@ -37,7 +35,6 @@ class ProfileScreen extends StatelessWidget {
               ? const Icon(
                 Icons.person,
                 size: 50,
-                color: Colors.white,
               )
               : null,
             ),
@@ -89,7 +86,7 @@ class ProfileScreen extends StatelessWidget {
             Card(
               margin: const EdgeInsets.symmetric(vertical: 8),
               child: SwitchListTile(
-                title: Text(themeProvider.modeText), // Dinamički tekst
+                title: Text(themeProvider.modeText),
                 value: themeProvider.getIsDarkTheme,
                 onChanged: (value) => themeProvider.setDarkTheme(themeValue: value),
                 secondary: const Icon(Icons.dark_mode),
@@ -203,9 +200,6 @@ class ProfileScreen extends StatelessWidget {
                 },
               ),
             ),
-
-            
-
           ],
         ),
       ),

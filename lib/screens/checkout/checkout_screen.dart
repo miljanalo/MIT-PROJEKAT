@@ -176,7 +176,11 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                             await ordersProvider.addOrder(
                               userId: auth.user!.id,
                               items: items,
+                              customerName: nameController.text.trim(),
+                              customerEmail: auth.user!.email,
                               totalPrice: totalPrice,
+                              address: addressController.text.trim(),
+                              phoneNumber: phoneController.text.trim(),
                             );
 
                               // brisanje korpe

@@ -61,6 +61,24 @@ class AdminOrdersScreen extends StatelessWidget {
                     const SizedBox(height: 4),
 
                     Text(
+                      'Porudžbina na ime: ${order.customerName ?? "N/A"}',
+                    ),
+
+                    Text(
+                      'Email: ${order.customerEmail ?? "N/A"}',
+                    ),
+
+                    Text(
+                      'Adresa isporuke: ${order.address}',
+                    ),
+
+                    Text(
+                      'Kontakt telefon: ${order.phoneNumber}',
+                    ),
+
+                    const Divider(),
+
+                    Text(
                       'Ukupno: ${order.totalPrice.toStringAsFixed(0)} RSD',
                     ),
 
